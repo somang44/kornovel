@@ -1,75 +1,844 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Новелла</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Библиотека новелл</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111318;
+      --muted:#6b7280;
+      --border:rgba(17,19,24,.08);
+      --accent:#e56a84;
+      --accent2:#7c5cff;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --r16:16px;
+      --r14:14px;
     }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 14px;
-      max-width: 700px;
-      margin: auto;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
     }
-    img {
-      width: 100%;
-      border-radius: 12px;
+    a{color:inherit}
+    .app{max-width:980px;margin:0 auto;padding:16px 16px 84px}
+    .topbar{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:color-mix(in srgb, var(--bg) 84%, white 16%);
+      border-bottom:1px solid var(--border);
+      padding:12px 16px;
     }
-    .chapter {
-      padding: 12px;
-      margin: 8px 0;
-      background: #eee;
-      border-radius: 8px;
-      cursor: pointer;
+    .topbar-inner{max-width:980px;margin:0 auto;display:flex;gap:12px;align-items:center}
+    .brand{
+      display:flex;gap:10px;align-items:center;min-width:180px
     }
-    .chapter:hover {
-      background: #ddd;
+    .logo{
+      width:36px;height:36px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:var(--shadow);
     }
-    button {
-      margin-top: 15px;
-      padding: 14px;
-      width: 100%;
-      font-size: 16px;
-      background: #0088cc;
-      color: white;
-      border: none;
-      border-radius: 10px;
+    .brand h1{font-size:14px;margin:0;line-height:1.1}
+    .brand p{font-size:12px;margin:0;color:var(--muted)}
+    .search{
+      flex:1;display:flex;gap:8px;align-items:center;
+      background:var(--card);border:1px solid var(--border);border-radius:14px;
+      padding:10px 12px;
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+    }
+    .search input{
+      border:none;outline:none;background:transparent;width:100%;
+      font-size:14px;color:var(--text)
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;border:1px solid var(--border);
+      background:var(--card);font-size:13px;color:var(--text);
+      cursor:pointer;user-select:none;
+    }
+    .pill small{color:var(--muted);font-size:12px}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--r16);
+      box-shadow:var(--shadow);
+    }
+    .card-h{padding:14px 14px 10px;display:flex;justify-content:space-between;align-items:center}
+    .card-h h2{font-size:14px;margin:0}
+    .card-h .sub{font-size:12px;color:var(--muted)}
+    .card-b{padding:0 14px 14px}
+    .hero{
+      padding:14px;
+      display:flex;gap:14px;align-items:stretch;
+    }
+    .hero .welcome{
+      flex:1;background:linear-gradient(135deg, #fff, #fff), linear-gradient(135deg,var(--accent),var(--accent2));
+      background-clip:padding-box,border-box;
+      border:1px solid transparent;
+      border-radius:var(--r16);
+      padding:14px;
+    }
+    .hero h3{margin:0 0 6px;font-size:16px}
+    .hero p{margin:0;color:var(--muted);line-height:1.45;font-size:13px}
+    .hero .cta{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      border:none;cursor:pointer;
+      padding:10px 12px;border-radius:12px;font-weight:600;
+      background:var(--text);color:white;font-size:13px;
+    }
+    .btn.secondary{
+      background:transparent;color:var(--text);
+      border:1px solid var(--border);
+    }
+    .btn.pink{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent2) 55%, var(--accent) 45%))}
+    .filters{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--border);
+      background:transparent;color:var(--text);font-size:13px;cursor:pointer;
+    }
+    .chip.active{background:color-mix(in srgb, var(--accent) 12%, white 88%);border-color:color-mix(in srgb, var(--accent) 35%, var(--border) 65%)}
+    .list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    @media (max-width:900px){.list{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width:520px){.list{grid-template-columns:1fr;}}
+    .novel{
+      border:1px solid var(--border);
+      border-radius:var(--r16);
+      overflow:hidden;
+      background:var(--card);
+      display:flex;flex-direction:column;
+      cursor:pointer;
+      transition:.15s transform, .15s box-shadow;
+    }
+    .novel:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
+    .cover{
+      height:180px;background:linear-gradient(135deg,#eee,#f7f7f7);
+      position:relative;
+    }
+    .cover img{width:100%;height:100%;object-fit:cover;display:block}
+    .badge{
+      position:absolute;left:10px;top:10px;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.9);border:1px solid var(--border);
+      font-size:12px;
+    }
+    .novel-b{padding:12px}
+    .title{font-weight:800;font-size:14px;margin:0 0 6px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+    .row{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px
+    }
+    .mini{
+      border:1px solid var(--border);background:transparent;border-radius:12px;
+      padding:8px 10px;font-size:12px;cursor:pointer;
+    }
+    .mini.primary{background:color-mix(in srgb, var(--accent) 14%, white 86%);border-color:color-mix(in srgb, var(--accent) 30%, var(--border) 70%)}
+    .divider{height:1px;background:var(--border);margin:10px 0}
+    .empty{
+      padding:12px;border:1px dashed var(--border);border-radius:14px;color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Reader */
+    .reader{
+      display:none;
+      position:fixed;inset:0;z-index:50;
+      background:color-mix(in srgb, var(--bg) 82%, white 18%);
+      overflow:auto;
+    }
+    .reader-inner{max-width:860px;margin:0 auto;padding:16px 16px 28px}
+    .reader-top{
+      position:sticky;top:0;z-index:2;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:color-mix(in srgb, var(--bg) 85%, white 15%);
+      border-bottom:1px solid var(--border);
+      padding:10px 16px;
+    }
+    .reader-top-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:10px}
+    .iconbtn{
+      border:1px solid var(--border);
+      background:var(--card);
+      padding:9px 11px;border-radius:12px;
+      cursor:pointer;font-weight:700;
+    }
+    .reader h1{font-size:18px;margin:14px 0 6px}
+    .reader h2{font-size:14px;margin:0 0 12px;color:var(--muted);font-weight:600}
+    .text{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--r16);
+      padding:16px;
+      line-height:1.7;
+      font-size:15px;
+      white-space:pre-wrap;
+    }
+    .reader-actions{
+      display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:88px;transform:translateX(-50%);
+      background:rgba(17,19,24,.92);color:white;
+      padding:10px 12px;border-radius:12px;
+      font-size:13px;display:none;z-index:60;
+    }
+
+    /* Bottom nav */
+    .bottom{
+      position:fixed;left:0;right:0;bottom:0;z-index:20;
+      border-top:1px solid var(--border);
+      background:color-mix(in srgb, var(--bg) 84%, white 16%);
+      backdrop-filter:saturate(180%) blur(10px);
+    }
+    .bottom-inner{
+      max-width:980px;margin:0 auto;
+      display:flex;justify-content:space-around;
+      padding:10px 8px;
+    }
+    .tab{
+      display:flex;flex-direction:column;gap:4px;align-items:center;
+      font-size:11px;color:var(--muted);cursor:pointer;
+      padding:6px 10px;border-radius:14px;
+      user-select:none;
+    }
+    .tab.active{color:var(--text);background:var(--card);border:1px solid var(--border)}
+    .tab b{font-size:12px}
+
+    /* small helpers */
+    .rightcol .card-b{padding-top:10px}
+    .kv{display:flex;justify-content:space-between;gap:10px;padding:10px 0}
+    .kv span{color:var(--muted);font-size:12px}
+    .kv b{font-size:13px}
+    .note{font-size:12px;color:var(--muted);line-height:1.45}
+    .linkbtn{
+      display:inline-flex;align-items:center;gap:8px;
+      text-decoration:none;
     }
   </style>
 </head>
 <body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 id="appTitle">Моя библиотека</h1>
+          <p id="appSubtitle">Читалка внутри Telegram</p>
+        </div>
+      </div>
 
-<div class="card">
-  <h1>Название новеллы</h1>
+      <div class="search" title="Поиск по названию и описанию">
+        🔎
+        <input id="q" placeholder="Поиск: название, жанры, описание…" />
+      </div>
 
-  <img src="cover.jpg" alt="Обложка">
+      <div class="pill" id="donateTop">
+        ❤️ <b>Донат</b> <small>поддержать</small>
+      </div>
+    </div>
+  </div>
 
-  <p><b>Описание:</b><br>
-  Здесь будет описание твоей новеллы.
-  </p>
+  <div class="app" id="app">
+    <div class="hero card">
+      <div class="welcome">
+        <h3 id="welcomeTitle">Добро пожаловать!</h3>
+        <p id="welcomeText">
+          Здесь собраны новеллы для комфортного чтения. Используй поиск, фильтры жанров и закладки.
+        </p>
+        <div class="cta">
+          <button class="btn pink" id="openFirst">📖 Открыть первую новеллу</button>
+          <button class="btn secondary" id="showProfile">👤 Профиль</button>
+          <button class="btn secondary" id="showBookmarks">🔖 Закладки</button>
+        </div>
+      </div>
+    </div>
 
-  <h3>Главы</h3>
-  <div class="chapter">Глава 1</div>
-  <div class="chapter">Глава 2</div>
-  <div class="chapter">Глава 3</div>
+    <div class="grid">
+      <!-- Left -->
+      <div class="leftcol">
+        <div class="card">
+          <div class="card-h">
+            <div>
+              <h2>Каталог</h2>
+              <div class="sub" id="catalogSub">Фильтруй по жанрам и выбирай, что читать</div>
+            </div>
+            <div class="sub" id="countInfo"></div>
+          </div>
+          <div class="card-b">
+            <div class="filters" id="genreChips"></div>
+            <div class="divider"></div>
+            <div class="list" id="catalog"></div>
+            <div class="empty" id="emptyCatalog" style="display:none;">Ничего не найдено. Попробуй другой запрос или жанр.</div>
+          </div>
+        </div>
+      </div>
 
-  <button onclick="donate()">💖 Поддержать автора</button>
-</div>
+      <!-- Right -->
+      <div class="rightcol">
+        <div class="card" id="panelProfile">
+          <div class="card-h">
+            <div>
+              <h2>Профиль</h2>
+              <div class="sub">Читатель и настройки</div>
+            </div>
+          </div>
+          <div class="card-b">
+            <div class="kv"><span>Имя</span><b id="pName">Гость</b></div>
+            <div class="kv"><span>Telegram ID</span><b id="pId">—</b></div>
+            <div class="kv"><span>Закладки</span><b id="pBookmarks">0</b></div>
+            <div class="kv"><span>Лайки</span><b id="pLikes">0</b></div>
+            <div class="divider"></div>
+            <div class="note">
+              Закладки и лайки сохраняются на твоём устройстве. В будущем можно добавить синхронизацию.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="panelBookmarks" style="margin-top:14px;">
+          <div class="card-h">
+            <div>
+              <h2>Закладки</h2>
+              <div class="sub">Продолжай чтение</div>
+            </div>
+            <button class="mini" id="clearBookmarks">Очистить</button>
+          </div>
+          <div class="card-b" id="bmList"></div>
+        </div>
+
+        <div class="card" id="panelDonate" style="margin-top:14px;">
+          <div class="card-h">
+            <div>
+              <h2>Поддержать автора</h2>
+              <div class="sub">донаты / благодарность</div>
+            </div>
+          </div>
+          <div class="card-b">
+            <button class="btn pink" style="width:100%" id="donateBtn">❤️ Донат</button>
+            <div class="note" style="margin-top:10px;">
+              Тут можно поставить ссылку на Boosty / ЮMoney / Patreon или Telegram Payments позже.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reader -->
+  <div class="reader" id="reader">
+    <div class="reader-top">
+      <div class="reader-top-inner">
+        <button class="iconbtn" id="backBtn">← Назад</button>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="rNovelTitle">—</div>
+          <div style="font-size:12px;color:var(--muted)" id="rChapterTitle">—</div>
+        </div>
+        <button class="iconbtn" id="bmBtn">🔖</button>
+        <button class="iconbtn" id="likeBtn">❤️</button>
+      </div>
+    </div>
+    <div class="reader-inner">
+      <h1 id="rH1">—</h1>
+      <h2 id="rH2">—</h2>
+      <div class="text" id="rText"></div>
+
+      <div class="reader-actions">
+        <button class="btn secondary" id="prevCh">← Предыдущая</button>
+        <button class="btn" id="nextCh">Следующая →</button>
+        <button class="btn pink" id="thanksBtn">✨ Сказать спасибо</button>
+        <a class="btn secondary linkbtn" href="#" id="shareBtn">🔗 Поделиться</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="bottom">
+    <div class="bottom-inner">
+      <div class="tab active" data-tab="catalog">📚 <b>Библиотека</b></div>
+      <div class="tab" data-tab="search">🔎 <b>Поиск</b></div>
+      <div class="tab" data-tab="bookmarks">🔖 <b>Закладки</b></div>
+      <div class="tab" data-tab="profile">👤 <b>Профиль</b></div>
+    </div>
+  </div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
+/**
+ * ДАННЫЕ (как менять):
+ * - Добавляй новеллы в DATA.novels
+ * - У каждой новеллы: id, title, cover (ссылка или файл), genres[], rating, views, description, chapters[]
+ * - У главы: id, title, text
+ *
+ * Обложки можно:
+ * - залить в репозиторий и указать "cover.jpg" / "covers/my.jpg"
+ * - или вставить прямую ссылку https://...
+ */
+const DATA = {
+  appTitle: "K-Новеллы",
+  appSubtitle: "Веб-читалка в Telegram",
+  donateUrl: "https://example.com/donate", // <-- ЗАМЕНИ на свою ссылку (Boosty/ЮMoney/т.д.)
+  novels: [
+    {
+      id: "n1",
+      title: "Название новеллы 1",
+      cover: "cover.jpg", // положи cover.jpg в репозиторий
+      genres: ["Романтика", "Драма"],
+      rating: 4.8,
+      views: 120,
+      description: "Короткое описание: о чём история и почему её стоит читать.",
+      chapters: [
+        { id:"c1", title:"Глава 1. Начало", text:"Текст главы 1...\n\n(сюда вставь свой текст)" },
+        { id:"c2", title:"Глава 2. Продолжение", text:"Текст главы 2...\n\n(сюда вставь свой текст)" },
+      ]
+    },
+    {
+      id: "n2",
+      title: "Название новеллы 2",
+      cover: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1200&q=60",
+      genres: ["Фэнтези", "Приключения"],
+      rating: 4.6,
+      views: 85,
+      description: "Ещё одна новелла. Можно добавить сколько угодно.",
+      chapters: [
+        { id:"c1", title:"Глава 1", text:"Текст..." }
+      ]
+    },
+    {
+      id: "n3",
+      title: "Название новеллы 3",
+      cover: "https://images.unsplash.com/photo-1520975693411-b4e38f2b1a32?auto=format&fit=crop&w=1200&q=60",
+      genres: ["Хоррор", "Мистика"],
+      rating: 4.1,
+      views: 66,
+      description: "Мрачная история для любителей мистики.",
+      chapters: [
+        { id:"c1", title:"Глава 1", text:"Текст..." }
+      ]
+    },
+  ]
+};
 
-  function donate() {
-    tg.showAlert("Донаты подключим следующим шагом 💸");
+// ---------- Telegram WebApp integration ----------
+const tg = window.Telegram?.WebApp;
+try { tg?.expand(); } catch(e){}
+
+function getTgUser(){
+  const u = tg?.initDataUnsafe?.user;
+  if (!u) return { name: "Гость", id: "—" };
+  const name = [u.first_name, u.last_name].filter(Boolean).join(" ").trim() || u.username || "Читатель";
+  return { name, id: String(u.id) };
+}
+
+// ---------- Storage ----------
+const KEY = {
+  bookmarks: "novel_app_bookmarks_v1",
+  likes: "novel_app_likes_v1",
+  thanks: "novel_app_thanks_v1",
+  lastRead: "novel_app_lastread_v1",
+};
+
+function load(key, fallback){
+  try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(e){ return fallback; }
+}
+function save(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+let BOOKMARKS = load(KEY.bookmarks, []); // [{novelId, chapterId, at: ts}]
+let LIKES = load(KEY.likes, []);         // ["n1:c1", ...]
+let THANKS = load(KEY.thanks, 0);
+let LASTREAD = load(KEY.lastRead, null); // {novelId, chapterIndex}
+
+// ---------- UI refs ----------
+const $ = (id)=>document.getElementById(id);
+const appTitle = $("appTitle");
+const appSubtitle = $("appSubtitle");
+const q = $("q");
+const genreChips = $("genreChips");
+const catalog = $("catalog");
+const emptyCatalog = $("emptyCatalog");
+const countInfo = $("countInfo");
+const bmList = $("bmList");
+const clearBookmarks = $("clearBookmarks");
+const donateBtn = $("donateBtn");
+const donateTop = $("donateTop");
+const openFirst = $("openFirst");
+const showProfile = $("showProfile");
+const showBookmarks = $("showBookmarks");
+
+const reader = $("reader");
+const backBtn = $("backBtn");
+const bmBtn = $("bmBtn");
+const likeBtn = $("likeBtn");
+const thanksBtn = $("thanksBtn");
+const shareBtn = $("shareBtn");
+const prevCh = $("prevCh");
+const nextCh = $("nextCh");
+
+const rNovelTitle = $("rNovelTitle");
+const rChapterTitle = $("rChapterTitle");
+const rH1 = $("rH1");
+const rH2 = $("rH2");
+const rText = $("rText");
+const toast = $("toast");
+
+const pName = $("pName");
+const pId = $("pId");
+const pBookmarks = $("pBookmarks");
+const pLikes = $("pLikes");
+
+// ---------- State ----------
+let selectedGenre = "Все";
+let query = "";
+let current = null; // {novelId, chapterIndex}
+
+// ---------- Helpers ----------
+function showToast(text){
+  toast.textContent = text;
+  toast.style.display = "block";
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>toast.style.display="none", 1500);
+}
+
+function getAllGenres(){
+  const set = new Set();
+  DATA.novels.forEach(n => (n.genres||[]).forEach(g => set.add(g)));
+  return ["Все", ...Array.from(set).sort((a,b)=>a.localeCompare(b,'ru'))];
+}
+
+function isBookmarked(novelId, chapterId){
+  return BOOKMARKS.some(b => b.novelId===novelId && b.chapterId===chapterId);
+}
+function toggleBookmark(novelId, chapterId){
+  if (isBookmarked(novelId, chapterId)){
+    BOOKMARKS = BOOKMARKS.filter(b => !(b.novelId===novelId && b.chapterId===chapterId));
+    save(KEY.bookmarks, BOOKMARKS);
+    showToast("Убрано из закладок");
+  } else {
+    BOOKMARKS.unshift({novelId, chapterId, at: Date.now()});
+    // ограничим размер
+    BOOKMARKS = BOOKMARKS.slice(0, 200);
+    save(KEY.bookmarks, BOOKMARKS);
+    showToast("Добавлено в закладки");
   }
-</script>
+  renderSidePanels();
+  renderReaderButtons();
+}
 
+function likeKey(novelId, chapterId){ return `${novelId}:${chapterId}`; }
+function isLiked(novelId, chapterId){ return LIKES.includes(likeKey(novelId, chapterId)); }
+function toggleLike(novelId, chapterId){
+  const k = likeKey(novelId, chapterId);
+  if (LIKES.includes(k)){
+    LIKES = LIKES.filter(x=>x!==k);
+    save(KEY.likes, LIKES);
+    showToast("Лайк убран");
+  } else {
+    LIKES.push(k);
+    save(KEY.likes, LIKES);
+    showToast("❤️ Спасибо!");
+  }
+  renderSidePanels();
+  renderReaderButtons();
+}
+
+function renderGenres(){
+  const genres = getAllGenres();
+  genreChips.innerHTML = "";
+  genres.forEach(g=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (g===selectedGenre ? " active" : "");
+    b.textContent = g;
+    b.onclick = ()=>{
+      selectedGenre = g;
+      renderGenres();
+      renderCatalog();
+    };
+    genreChips.appendChild(b);
+  });
+}
+
+function matchesNovel(n){
+  const ql = query.trim().toLowerCase();
+  const genreOk = (selectedGenre==="Все") || (n.genres||[]).includes(selectedGenre);
+  if (!genreOk) return false;
+  if (!ql) return true;
+  const hay = [
+    n.title, n.description, (n.genres||[]).join(" ")
+  ].join(" ").toLowerCase();
+  return hay.includes(ql);
+}
+
+function novelCard(n){
+  const el = document.createElement("div");
+  el.className = "novel";
+  el.innerHTML = `
+    <div class="cover">
+      <img src="${escapeHtmlAttr(n.cover)}" alt="Обложка">
+      <div class="badge">★ ${n.rating ?? "—"} · 👁 ${n.views ?? 0}</div>
+    </div>
+    <div class="novel-b">
+      <div class="title">${escapeHtml(n.title)}</div>
+      <div class="meta">
+        ${(n.genres||[]).map(g=>`<span>#${escapeHtml(g)}</span>`).join("")}
+      </div>
+      <div class="row">
+        <button class="mini primary">Читать</button>
+        <button class="mini" data-info>О новелле</button>
+      </div>
+    </div>
+  `;
+  el.onclick = (e)=>{
+    const info = e.target?.getAttribute?.("data-info") !== null;
+    if (info){
+      showNovelAbout(n);
+    } else {
+      openReader(n.id, 0);
+    }
+  };
+  return el;
+}
+
+function renderCatalog(){
+  const items = DATA.novels.filter(matchesNovel);
+  catalog.innerHTML = "";
+  items.forEach(n=>catalog.appendChild(novelCard(n)));
+  emptyCatalog.style.display = items.length ? "none" : "block";
+  countInfo.textContent = `${items.length}/${DATA.novels.length}`;
+}
+
+function showNovelAbout(n){
+  const genres = (n.genres||[]).map(g=>`#${g}`).join(" · ");
+  const text = `${n.title}\n\n${n.description}\n\nЖанры: ${genres || "—"}\nГлав: ${(n.chapters||[]).length}`;
+  if (tg?.showPopup){
+    tg.showPopup({
+      title: "О новелле",
+      message: text,
+      buttons: [
+        {id:"read", type:"default", text:"Читать"},
+        {id:"close", type:"cancel", text:"Закрыть"},
+      ]
+    }, (id)=>{
+      if (id==="read") openReader(n.id, 0);
+    });
+  } else {
+    alert(text);
+  }
+}
+
+function renderSidePanels(){
+  // profile
+  const u = getTgUser();
+  pName.textContent = u.name;
+  pId.textContent = u.id;
+  pBookmarks.textContent = String(BOOKMARKS.length);
+  pLikes.textContent = String(LIKES.length);
+
+  // bookmarks list
+  bmList.innerHTML = "";
+  if (!BOOKMARKS.length){
+    bmList.innerHTML = `<div class="empty">Пока пусто. Открой главу и нажми 🔖</div>`;
+    return;
+  }
+  BOOKMARKS.slice(0, 12).forEach(b=>{
+    const n = DATA.novels.find(x=>x.id===b.novelId);
+    if (!n) return;
+    const chIndex = (n.chapters||[]).findIndex(c=>c.id===b.chapterId);
+    const ch = (n.chapters||[])[chIndex];
+    if (!ch) return;
+
+    const row = document.createElement("div");
+    row.className = "novel";
+    row.style.cursor="pointer";
+    row.innerHTML = `
+      <div class="novel-b">
+        <div class="title">${escapeHtml(n.title)}</div>
+        <div class="meta"><span>${escapeHtml(ch.title)}</span></div>
+        <div class="row">
+          <button class="mini primary">Открыть</button>
+          <button class="mini">Убрать</button>
+        </div>
+      </div>
+    `;
+    row.onclick = (e)=>{
+      const btnText = (e.target?.textContent||"").trim();
+      if (btnText==="Убрать"){
+        toggleBookmark(b.novelId, b.chapterId);
+      } else {
+        openReader(b.novelId, chIndex);
+      }
+    };
+    bmList.appendChild(row);
+  });
+}
+
+function openReader(novelId, chapterIndex){
+  const n = DATA.novels.find(x=>x.id===novelId);
+  if (!n) return;
+  const ch = (n.chapters||[])[chapterIndex];
+  if (!ch) return;
+
+  current = { novelId, chapterIndex };
+  LASTREAD = { novelId, chapterIndex };
+  save(KEY.lastRead, LASTREAD);
+
+  rNovelTitle.textContent = n.title;
+  rChapterTitle.textContent = `Глава ${chapterIndex+1} из ${(n.chapters||[]).length}`;
+  rH1.textContent = ch.title;
+  rH2.textContent = (n.genres||[]).map(g=>`#${g}`).join(" · ");
+  rText.textContent = ch.text || "";
+
+  renderReaderButtons();
+
+  reader.style.display = "block";
+  document.body.style.overflow="hidden";
+
+  // share link (просто ссылка на сайт)
+  shareBtn.onclick = (e)=>{
+    e.preventDefault();
+    const url = location.href.split("#")[0];
+    const shareText = `${n.title} — ${ch.title}`;
+    const msg = `${shareText}\n${url}`;
+    if (tg?.openTelegramLink){
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`);
+    } else {
+      navigator.clipboard?.writeText(msg);
+      showToast("Ссылка скопирована");
+    }
+  };
+
+  prevCh.onclick = ()=>openReader(novelId, Math.max(0, chapterIndex-1));
+  nextCh.onclick = ()=>openReader(novelId, Math.min((n.chapters||[]).length-1, chapterIndex+1));
+
+  prevCh.disabled = chapterIndex===0;
+  nextCh.disabled = chapterIndex===((n.chapters||[]).length-1);
+}
+
+function closeReader(){
+  reader.style.display = "none";
+  document.body.style.overflow="";
+}
+
+function renderReaderButtons(){
+  if (!current) return;
+  const n = DATA.novels.find(x=>x.id===current.novelId);
+  const ch = n?.chapters?.[current.chapterIndex];
+  if (!n || !ch) return;
+
+  bmBtn.textContent = isBookmarked(n.id, ch.id) ? "🔖✓" : "🔖";
+  likeBtn.textContent = isLiked(n.id, ch.id) ? "❤️✓" : "❤️";
+
+  bmBtn.onclick = ()=>toggleBookmark(n.id, ch.id);
+  likeBtn.onclick = ()=>toggleLike(n.id, ch.id);
+
+  thanksBtn.onclick = ()=>{
+    THANKS = (THANKS||0) + 1;
+    save(KEY.thanks, THANKS);
+    showToast("✨ Спасибо принято!");
+  };
+}
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function escapeHtmlAttr(s){ return escapeHtml(s).replaceAll("`","&#096;"); }
+
+// ---------- Tabs ----------
+function setTab(name){
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle("active", t.dataset.tab===name);
+  });
+
+  if (name==="catalog"){
+    // nothing special
+    document.getElementById("panelProfile").scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+  if (name==="search"){
+    q.focus();
+  }
+  if (name==="bookmarks"){
+    document.getElementById("panelBookmarks").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  if (name==="profile"){
+    document.getElementById("panelProfile").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick = ()=>setTab(t.dataset.tab);
+});
+
+// ---------- Wire up ----------
+function init(){
+  // Titles
+  appTitle.textContent = DATA.appTitle || "Библиотека";
+  appSubtitle.textContent = DATA.appSubtitle || "";
+  document.title = DATA.appTitle || document.title;
+
+  // donate handlers
+  function goDonate(){
+    const url = DATA.donateUrl;
+    if (!url || url==="https://example.com/donate"){
+      showToast("Сначала вставь свою ссылку доната в donateUrl");
+      return;
+    }
+    if (tg?.openLink) tg.openLink(url);
+    else window.open(url, "_blank");
+  }
+  donateBtn.onclick = goDonate;
+  donateTop.onclick = goDonate;
+
+  // search
+  q.addEventListener("input", ()=>{
+    query = q.value;
+    renderCatalog();
+  });
+
+  // panels buttons
+  showProfile.onclick = ()=>setTab("profile");
+  showBookmarks.onclick = ()=>setTab("bookmarks");
+
+  // open first / last read
+  openFirst.onclick = ()=>{
+    if (LASTREAD){
+      openReader(LASTREAD.novelId, LASTREAD.chapterIndex);
+    } else if (DATA.novels[0]){
+      openReader(DATA.novels[0].id, 0);
+    }
+  };
+
+  // bookmarks clear
+  clearBookmarks.onclick = ()=>{
+    BOOKMARKS = [];
+    save(KEY.bookmarks, BOOKMARKS);
+    renderSidePanels();
+    showToast("Закладки очищены");
+  };
+
+  // reader close
+  backBtn.onclick = closeReader;
+
+  // profile data
+  renderSidePanels();
+
+  // genres + catalog
+  renderGenres();
+  renderCatalog();
+
+  // Telegram theme hint (не обяз.)
+  try{
+    if (tg?.themeParams?.bg_color){
+      // Можно сделать авто-подстройку позже
+    }
+  }catch(e){}
+}
+init();
+</script>
 </body>
 </html>
