@@ -304,7 +304,7 @@ function show(id){
   });
 }
 function gvizUrl(sheetName){
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}`;
 }
 async function fetchSheet(sheetName){
   const res = await fetch(gvizUrl(sheetName), { cache: "no-store" });
