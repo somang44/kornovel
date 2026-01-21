@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>K-Новеллы</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -14,455 +14,394 @@
   --text:#111318;
   --muted:#6b7280;
   --accent:#e56a84;
-  --border:rgba(17,19,24,.10);
+  --border:#e5e7eb;
   --shadow:0 10px 30px rgba(0,0,0,.06);
-  --r14:14px;
-  --r18:18px;
 }
 body.dark{
   --bg:#0f1115;
   --card:#161a22;
   --text:#f3f4f6;
   --muted:#9ca3af;
-  --border:rgba(255,255,255,.10);
-  --shadow:0 16px 40px rgba(0,0,0,.28);
+  --border:#262b36;
+  --shadow:0 10px 30px rgba(0,0,0,.25);
 }
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-a{color:inherit}
 header{
-  position:sticky; top:0; z-index:10;
-  background:color-mix(in srgb, var(--bg) 86%, white 14%);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:saturate(180%) blur(10px);
-  padding:12px 14px;
+  padding:14px 16px;
+  font-weight:800;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
 }
-.head-inner{
-  max-width:980px; margin:0 auto;
-  display:flex; gap:10px; align-items:center; justify-content:space-between;
-}
-.brand{font-weight:900}
-.iconbtn{
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--text);
-  padding:8px 10px;
+button{
+  border:none;
+  background:var(--accent);
+  color:white;
+  padding:8px 12px;
   border-radius:12px;
   cursor:pointer;
 }
-.wrap{max-width:980px;margin:0 auto;padding:14px 14px 84px}
+.container{
+  max-width:900px;
+  margin:0 auto;
+}
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:var(--r18);
   box-shadow:var(--shadow);
+  border-radius:16px;
   padding:14px;
+  margin:14px;
 }
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-}
-@media (max-width:720px){.grid{grid-template-columns:1fr}}
-.novel{cursor:pointer}
-.novel .title{font-weight:900;margin:10px 0 4px}
-.novel .meta{color:var(--muted);font-size:13px}
-.cover{
-  width:100%; height:190px;
-  border-radius:var(--r14);
-  border:1px solid var(--border);
-  overflow:hidden;
-  background:linear-gradient(135deg,#eee,#f7f7f7);
-}
-.cover img{width:100%;height:100%;object-fit:cover;display:block}
 .hidden{display:none}
-.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
-.small{color:var(--muted);font-size:13px;line-height:1.45}
-.chapters{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.chapter{
+.novel{cursor:pointer}
+.row{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+.cover{
+  width:72px;
+  height:100px;
+  object-fit:cover;
+  border-radius:12px;
   border:1px solid var(--border);
-  background:transparent;
-  border-radius:14px;
-  padding:10px 12px;
-  cursor:pointer;
-  display:flex;justify-content:space-between;align-items:center;
+  flex:0 0 auto;
+  background:rgba(0,0,0,.04);
 }
-.chapter.locked{opacity:.6}
-.badge{
-  font-size:12px;
-  padding:5px 8px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:color-mix(in srgb, var(--accent) 12%, var(--card) 88%);
-}
-.readerText{
-  white-space:pre-wrap;
-  line-height:1.7;
-  font-size:15px;
-}
-hr.sep{
-  border:none;height:1px;background:var(--border);margin:12px 0;
-}
-.bottom{
-  position:fixed;bottom:0;left:0;right:0;z-index:20;
-  background:color-mix(in srgb, var(--bg) 86%, white 14%);
-  border-top:1px solid var(--border);
-  backdrop-filter:saturate(180%) blur(10px);
-}
-.bottom-inner{
-  max-width:980px;margin:0 auto;
-  display:flex;justify-content:space-around;
-  padding:10px 8px;
-}
-.tab{
-  cursor:pointer;
-  padding:8px 12px;
-  border-radius:14px;
+.small{
   color:var(--muted);
   font-size:13px;
+  margin-top:6px;
 }
-.tab.active{
-  background:var(--card);
+h2{margin:0 0 8px 0}
+h3{margin:0}
+
+.chapter{
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin-top:10px;
+  cursor:pointer;
+}
+.chapter:hover{filter:brightness(.98)}
+.chapter.locked{opacity:.55; cursor:not-allowed}
+
+.readerHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.readerMeta{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:10px;
+}
+.readerText{
+  /* ВОТ ЭТО ГЛАВНОЕ: сохраняем переносы строк из Google Sheets */
+  white-space: pre-wrap;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:14px;
+}
+.actionBtn{
+  background:transparent;
   border:1px solid var(--border);
   color:var(--text);
+  padding:8px 12px;
+  border-radius:12px;
+  cursor:pointer;
 }
-.toast{
-  position:fixed;left:50%;bottom:86px;transform:translateX(-50%);
-  background:rgba(17,19,24,.92);color:white;
-  padding:10px 12px;border-radius:12px;
-  font-size:13px;display:none;z-index:50;
+.likeBtn{
+  border:1px solid var(--border);
+  background:transparent;
+  padding:8px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
+
+.bottom{
+  position:fixed;
+  bottom:0; left:0; right:0;
+  background:var(--card);
+  border-top:1px solid var(--border);
+}
+.bottomInner{
+  max-width:900px;
+  margin:0 auto;
+  display:flex;
+  justify-content:space-around;
+}
+.tab{
+  padding:12px 10px;
+  font-size:13px;
+  cursor:pointer;
+  color:var(--muted);
+}
+.tab.active{color:var(--text); font-weight:700}
+.padBottom{height:56px;}
 </style>
 </head>
 
 <body>
-<header>
-  <div class="head-inner">
-    <div class="brand" id="appTitle">K-Новеллы</div>
-    <button class="iconbtn" id="themeBtn" title="Светлая/тёмная тема">🌗</button>
-  </div>
+<header class="container">
+  <div>K-Новеллы</div>
+  <button onclick="toggleTheme()">🌗</button>
 </header>
 
-<div class="wrap">
+<div class="container padBottom">
 
   <!-- БИБЛИОТЕКА -->
-  <section id="library">
-    <div class="card">
-      <div class="row">
-        <div>
-          <div style="font-weight:900;font-size:16px">Библиотека</div>
-          <div class="small" id="libSub">Загружаю новеллы из Google Таблицы…</div>
-        </div>
-        <button class="iconbtn" id="reloadBtn" title="Обновить">⟲</button>
-      </div>
-      <hr class="sep">
-      <div class="grid" id="libraryList"></div>
-      <div class="small" id="libEmpty" style="display:none;margin-top:10px">
-        Пока пусто. Проверь лист <b>novels</b> и доступ «Все у кого есть ссылка — Читатель».
-      </div>
-    </div>
-  </section>
+  <div id="library" class="card">
+    <h2>Библиотека</h2>
+    <div id="libraryList" class="small">Загрузка…</div>
+  </div>
 
   <!-- СТРАНИЦА НОВЕЛЛЫ -->
-  <section id="novelPage" class="hidden">
+  <div id="novelPage" class="hidden">
     <div class="card">
-      <button class="iconbtn" onclick="show('library')">← Назад</button>
-      <div style="height:10px"></div>
-      <div class="cover" id="novelCoverWrap"></div>
-      <div class="title" style="font-weight:900;font-size:18px;margin:12px 0 6px" id="novelTitle">—</div>
-      <div class="small" id="novelGenres">—</div>
-      <div style="height:8px"></div>
-      <div class="small" id="novelDesc">—</div>
-      <hr class="sep">
-      <div style="font-weight:900;margin-bottom:8px">Главы</div>
-      <div class="chapters" id="chapters"></div>
+      <div class="row">
+        <img id="novelCover" class="cover" alt="">
+        <div style="flex:1">
+          <h2 id="novelTitle"></h2>
+          <div id="novelGenres" class="small"></div>
+          <p id="novelDesc" class="small" style="margin:8px 0 0 0"></p>
+        </div>
+      </div>
+      <div id="chapters" style="margin-top:12px"></div>
+      <div class="actions">
+        <button class="actionBtn" onclick="show('library')">← Назад</button>
+      </div>
     </div>
-  </section>
+  </div>
 
   <!-- ЧИТАЛКА -->
-  <section id="reader" class="hidden">
+  <div id="reader" class="hidden">
     <div class="card">
-      <button class="iconbtn" onclick="backFromReader()">← Назад</button>
-      <div style="height:10px"></div>
-      <div style="font-weight:900;font-size:18px" id="chapterTitle">—</div>
-      <div class="small" id="chapterMeta">—</div>
-      <hr class="sep">
-      <div class="readerText" id="chapterText">—</div>
-      <hr class="sep">
-      <div class="row" style="gap:8px;flex-wrap:wrap">
-        <button class="iconbtn" id="prevBtn">← Пред.</button>
-        <button class="iconbtn" id="nextBtn">След. →</button>
-        <button class="iconbtn" id="likeBtn">❤️ Лайк</button>
+      <div class="readerHead">
+        <h2 id="chapterTitle" style="margin:0"></h2>
+        <button class="actionBtn" onclick="backToNovel()">← Назад</button>
+      </div>
+      <div id="chapterMeta" class="readerMeta"></div>
+      <div id="chapterText" class="readerText"></div>
+
+      <div class="actions">
+        <button class="actionBtn" onclick="prevChapter()">← Пред.</button>
+        <button class="actionBtn" onclick="nextChapter()">След →</button>
+        <button class="likeBtn" onclick="likeChapter()">❤️ <span id="likeCount">0</span></button>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- ПРОФИЛЬ -->
-  <section id="profile" class="hidden">
+  <div id="profile" class="hidden">
     <div class="card">
-      <div style="font-weight:900;font-size:18px;margin-bottom:8px">Профиль</div>
-      <div class="small">Прочитано глав: <b id="statRead">0</b></div>
-      <div class="small">Лайков: <b id="statLikes">0</b></div>
-      <div class="small" style="margin-top:10px">
-        Статистика хранится на твоём устройстве (localStorage).
-      </div>
+      <h2>Профиль</h2>
+      <p>Прочитано глав: <b id="statRead">0</b></p>
+      <p>Лайков: <b id="statLikes">0</b></p>
     </div>
-  </section>
+  </div>
 
 </div>
 
+<!-- НИЖНЕЕ МЕНЮ -->
 <div class="bottom">
-  <div class="bottom-inner">
-    <div class="tab active" data-tab="library">📚 Библиотека</div>
-    <div class="tab" data-tab="profile">👤 Профиль</div>
+  <div class="bottomInner">
+    <div id="tabLib" class="tab active" onclick="show('library')">📚 Библиотека</div>
+    <div id="tabProf" class="tab" onclick="show('profile')">👤 Профиль</div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-// ========= Telegram WebApp =========
 const tg = window.Telegram?.WebApp;
-try{ tg?.expand(); }catch(e){}
+tg?.expand?.();
 
-// ========= НАСТРОЙКИ GOOGLE SHEETS =========
+let DATA = {}; // будет загружаться из Google Sheets
 const SHEET_ID = "1Cn6zEDo5nfoihe_p0bJxU6WICuhLN38NcWqyKOD7rA0";
 const SHEETS = { novels:"novels", chapters:"chapters" };
 
-// Ожидаемые колонки:
-// novels: id | title | description | cover | genres
-// chapters: id | novel_id | title | text | is_paid | order (опционально)
-
-// ========= State =========
-let DATA = {};              // { n1: {title, desc, cover, genres, chapters:[{id,title,text,paid,order}]} }
-let currentNovelId = null;
-let currentChapterIndex = 0;
-
-// stats (локально)
+// счётчики
 let readCount = Number(localStorage.getItem("read")||0);
 let likes = Number(localStorage.getItem("likes")||0);
 
-// theme
-const THEME_KEY = "theme_v1";
-if (localStorage.getItem(THEME_KEY)==="dark") document.body.classList.add("dark");
+let currentNovelId = null;
+let currentChapterIndex = null;
 
-// ========= UI refs =========
-const $ = (id)=>document.getElementById(id);
-const appTitle = $("appTitle");
-const libSub = $("libSub");
-const libraryList = $("libraryList");
-const libEmpty = $("libEmpty");
-const reloadBtn = $("reloadBtn");
-const themeBtn = $("themeBtn");
-const toast = $("toast");
-
-const novelCoverWrap = $("novelCoverWrap");
-const novelTitle = $("novelTitle");
-const novelDesc = $("novelDesc");
-const novelGenres = $("novelGenres");
-const chaptersEl = $("chapters");
-
-const chapterTitle = $("chapterTitle");
-const chapterMeta = $("chapterMeta");
-const chapterText = $("chapterText");
-const prevBtn = $("prevBtn");
-const nextBtn = $("nextBtn");
-const likeBtn = $("likeBtn");
-
-const statRead = $("statRead");
-const statLikes = $("statLikes");
-
-// ========= Helpers =========
-function escapeHtml(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+function setActiveTab(which){
+  document.getElementById("tabLib").classList.toggle("active", which==="library");
+  document.getElementById("tabProf").classList.toggle("active", which==="profile");
 }
-function showToast(msg){
-  toast.textContent = msg;
-  toast.style.display = "block";
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(()=>toast.style.display="none", 1400);
-}
+
 function show(id){
-  ["library","novelPage","reader","profile"].forEach(x=>$(x).classList.add("hidden"));
-  $(id).classList.remove("hidden");
-  // обновим профильные числа
-  statRead.textContent = String(readCount);
-  statLikes.textContent = String(likes);
-  // табы
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.classList.toggle("active", t.dataset.tab === id);
+  ["library","novelPage","reader","profile"].forEach(x=>{
+    const el = document.getElementById(x);
+    if(el) el.classList.add("hidden");
   });
+  document.getElementById(id).classList.remove("hidden");
+
+  document.getElementById("statRead").textContent = readCount;
+  document.getElementById("statLikes").textContent = likes;
+
+  setActiveTab(id==="profile" ? "profile" : "library");
 }
+
 function gvizUrl(sheetName){
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(sheetName)}`;
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
 }
+
 async function fetchSheet(sheetName){
-  const res = await fetch(gvizUrl(sheetName), { cache: "no-store" });
+  const res = await fetch(gvizUrl(sheetName), {cache:"no-store"});
   const text = await res.text();
   const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}")+1));
   const cols = json.table.cols.map(c => (c.label||"").trim());
   const rows = (json.table.rows||[]).map(r => (r.c||[]).map(cell => cell ? (cell.v ?? "") : ""));
   return { cols, rows };
 }
+
 function toObjects(cols, rows){
   return rows
     .filter(r => r.some(v => String(v).trim() !== ""))
     .map(r => {
       const obj = {};
-      cols.forEach((k,i)=> obj[k] = r[i]);
+      cols.forEach((k,i)=> obj[k]=r[i]);
       return obj;
     });
 }
-function normBool(v){
-  return String(v||"").trim().toUpperCase()==="TRUE" || String(v||"").trim()==="1";
-}
 
-// ========= Load from Sheets =========
 async function loadData(){
-  libSub.textContent = "Загружаю новеллы из Google Таблицы…";
-  libEmpty.style.display = "none";
-
   const novelsRaw = await fetchSheet(SHEETS.novels);
   const chaptersRaw = await fetchSheet(SHEETS.chapters);
 
   const novels = toObjects(novelsRaw.cols, novelsRaw.rows);
   const chapters = toObjects(chaptersRaw.cols, chaptersRaw.rows);
 
-  // chapters by novel
+  // группируем главы по novel_id
   const byNovel = {};
   for (const ch of chapters){
     const nid = String(ch.novel_id||"").trim();
-    if (!nid) continue;
-    (byNovel[nid] ||= []).push({
+    if(!nid) continue;
+
+    if(!byNovel[nid]) byNovel[nid]=[];
+    byNovel[nid].push({
       id: String(ch.id||"").trim(),
       title: String(ch.title||"").trim() || "Глава",
       text: String(ch.text||""),
-      paid: normBool(ch.is_paid),
+      paid: String(ch.is_paid||"").toUpperCase()==="TRUE",
       order: ch.order ? Number(ch.order) : 0,
     });
   }
   Object.keys(byNovel).forEach(nid=>{
-    byNovel[nid].sort((a,b)=> (a.order||0)-(b.order||0) || String(a.id).localeCompare(String(b.id)));
+    byNovel[nid].sort((a,b)=>(a.order||0)-(b.order||0));
   });
 
-  // build DATA
+  // приводим к формату DATA
   const result = {};
   for (const n of novels){
     const id = String(n.id||"").trim();
-    if (!id) continue;
-    const genres = String(n.genres||"")
-      .split(",")
-      .map(x=>x.trim())
-      .filter(Boolean);
+    if(!id) continue;
 
     result[id] = {
+      id,
       title: String(n.title||"").trim() || "Новелла",
       desc: String(n.description||"").trim(),
       cover: String(n.cover||"").trim(),
-      genres,
+      genres: String(n.genres||"").trim(),
       chapters: byNovel[id] || [],
     };
   }
-
   DATA = result;
-
-  const count = Object.keys(DATA).length;
-  libSub.textContent = count ? `Найдено новелл: ${count}` : "Новеллы не найдены.";
-  renderLibrary();
 }
 
-// ========= Render library =========
 function renderLibrary(){
-  libraryList.innerHTML = "";
+  const list = document.getElementById("libraryList");
   const ids = Object.keys(DATA);
 
-  if (!ids.length){
-    libEmpty.style.display = "block";
+  if(!ids.length){
+    list.textContent = "Новеллы не найдены. Проверь лист novels и доступ «Все, у кого есть ссылка — Читатель».";
     return;
   }
-  libEmpty.style.display = "none";
 
+  list.innerHTML = "";
   ids.forEach(id=>{
     const n = DATA[id];
-    const chCount = (n.chapters||[]).length;
-
-    const card = document.createElement("div");
-    card.className = "card novel";
-    card.onclick = ()=>openNovel(id);
-
-    const cover = n.cover ? `<div class="cover"><img src="${escapeHtml(n.cover)}" alt="cover"></div>` : `<div class="cover"></div>`;
-    const genres = (n.genres||[]).length ? escapeHtml(n.genres.join(" · ")) : "—";
-
-    card.innerHTML = `
-      ${cover}
-      <div class="title">${escapeHtml(n.title)}</div>
-      <div class="meta">${genres} ${chCount ? "· " + chCount + " глав" : ""}</div>
+    const div = document.createElement("div");
+    div.className = "card novel";
+    div.style.margin = "12px 0 0 0";
+    div.innerHTML = `
+      <div class="row">
+        <img class="cover" src="${escapeHtml(n.cover)}" alt="">
+        <div style="flex:1">
+          <h3>${escapeHtml(n.title)}</h3>
+          <div class="small">${escapeHtml(n.genres || "")} · ${n.chapters.length} глав</div>
+        </div>
+      </div>
     `;
-    libraryList.appendChild(card);
+    div.onclick = ()=>openNovel(id);
+    list.appendChild(div);
   });
 }
 
-// ========= Novel page =========
 function openNovel(id){
   const n = DATA[id];
-  if (!n){
-    alert("Не нашла новеллу. Проверь id в листе novels.");
-    return;
-  }
+  if(!n) return;
+
   currentNovelId = id;
   show("novelPage");
 
-  // cover
-  if (n.cover){
-    novelCoverWrap.innerHTML = `<img src="${escapeHtml(n.cover)}" alt="cover">`;
-    novelCoverWrap.className = "cover";
-  } else {
-    novelCoverWrap.innerHTML = "";
-    novelCoverWrap.className = "cover";
-  }
+  document.getElementById("novelTitle").textContent = n.title;
+  document.getElementById("novelDesc").textContent = n.desc || "";
+  document.getElementById("novelGenres").textContent = n.genres || "";
+  const coverEl = document.getElementById("novelCover");
+  coverEl.src = n.cover || "";
+  coverEl.style.display = n.cover ? "block" : "none";
 
-  novelTitle.textContent = n.title;
-  novelDesc.textContent = n.desc || "";
-  novelGenres.textContent = (n.genres||[]).length ? n.genres.map(g=>`#${g}`).join(" · ") : "";
-
+  const chaptersEl = document.getElementById("chapters");
   chaptersEl.innerHTML = "";
-  if (!n.chapters.length){
-    chaptersEl.innerHTML = `<div class="small">Глав пока нет.</div>`;
-    return;
-  }
 
   n.chapters.forEach((c,i)=>{
     const div = document.createElement("div");
     div.className = "chapter" + (c.paid ? " locked" : "");
-    div.innerHTML = `
-      <div>${escapeHtml(c.title)}</div>
-      <div class="badge">${c.paid ? "🔒 Платно" : "Бесплатно"}</div>
-    `;
-    div.onclick = ()=>openChapter(id,i);
+    div.innerHTML = `${escapeHtml(c.title)}${c.paid ? " 🔒" : ""}`;
+    div.onclick = ()=>openChapter(id, i);
     chaptersEl.appendChild(div);
   });
+
+  if(!n.chapters.length){
+    const empty = document.createElement("div");
+    empty.className = "small";
+    empty.style.marginTop = "10px";
+    empty.textContent = "Пока нет глав. Добавь строки в лист chapters.";
+    chaptersEl.appendChild(empty);
+  }
 }
 
-// ========= Reader =========
 function openChapter(novelId, i){
   const novel = DATA[novelId];
-  if (!novel) return;
+  if(!novel) return;
 
   const ch = novel.chapters[i];
-  if (!ch) return;
+  if(!ch) return;
 
-  if (ch.paid){
-    alert("Здесь будет Telegram Payments / Stars 💳 (пока заглушка).");
+  if(ch.paid){
+    alert("Здесь будет Telegram Payments 💳");
     return;
   }
 
@@ -470,60 +409,72 @@ function openChapter(novelId, i){
   currentChapterIndex = i;
 
   show("reader");
-  chapterTitle.textContent = ch.title;
-  chapterMeta.textContent = `${novel.title} · Глава ${i+1} из ${novel.chapters.length}`;
-  chapterText.textContent = ch.text;
+
+  document.getElementById("chapterTitle").textContent = ch.title;
+  document.getElementById("chapterMeta").textContent = `${novel.title} · Глава ${i+1} из ${novel.chapters.length}`;
+
+  // ВАЖНО: textContent + CSS white-space: pre-wrap = абзацы сохраняются
+  document.getElementById("chapterText").textContent = ch.text;
 
   readCount++;
-  localStorage.setItem("read", String(readCount));
+  localStorage.setItem("read", readCount);
 
-  prevBtn.disabled = i===0;
-  nextBtn.disabled = i===novel.chapters.length-1;
-
-  prevBtn.onclick = ()=>openChapter(novelId, Math.max(0, i-1));
-  nextBtn.onclick = ()=>openChapter(novelId, Math.min(novel.chapters.length-1, i+1));
+  document.getElementById("likeCount").textContent = likes;
 }
 
-function backFromReader(){
-  if (currentNovelId) openNovel(currentNovelId);
+function backToNovel(){
+  if(currentNovelId) openNovel(currentNovelId);
   else show("library");
 }
 
-likeBtn.onclick = ()=>{
-  likes++;
-  localStorage.setItem("likes", String(likes));
-  showToast("❤️ Лайк!");
-  statLikes.textContent = String(likes);
-};
-
-// ========= Theme =========
-function toggleTheme(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem(THEME_KEY, document.body.classList.contains("dark") ? "dark" : "light");
+function prevChapter(){
+  if(currentNovelId==null || currentChapterIndex==null) return;
+  const i = currentChapterIndex - 1;
+  if(i < 0) return;
+  openChapter(currentNovelId, i);
+}
+function nextChapter(){
+  if(currentNovelId==null || currentChapterIndex==null) return;
+  const i = currentChapterIndex + 1;
+  const novel = DATA[currentNovelId];
+  if(!novel) return;
+  if(i >= novel.chapters.length) return;
+  openChapter(currentNovelId, i);
 }
 
-// ========= Bottom tabs =========
-document.querySelectorAll(".tab").forEach(t=>{
-  t.onclick = ()=>show(t.dataset.tab);
-});
+function likeChapter(){
+  likes++;
+  localStorage.setItem("likes", likes);
+  document.getElementById("likeCount").textContent = likes;
+  document.getElementById("statLikes").textContent = likes;
+}
 
-// ========= Buttons =========
-themeBtn.onclick = toggleTheme;
-reloadBtn.onclick = ()=>{
-  loadData().then(()=>showToast("Обновлено")).catch(err=>{
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+}
+
+// простая защита от ломания HTML (для title/genres)
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+// старт
+(async ()=>{
+  try{
+    await loadData();
+    renderLibrary();
+    show("library");
+  }catch(err){
     console.error(err);
-    alert("Не удалось загрузить таблицу. Проверь доступ: «Все у кого есть ссылка — Читатель».");
-  });
-};
-
-// ========= Init =========
-loadData()
-  .then(()=>show("library"))
-  .catch(err=>{
-    console.error(err);
-    alert("Не удалось загрузить таблицу. Проверь доступ: «Все у кого есть ссылка — Читатель». \nИ проверь, что листы называются: novels и chapters.");
-  });
-
+    alert("Не удалось загрузить таблицу. Проверь доступ: «Все у кого есть ссылка — Читатель» и названия листов novels/chapters.");
+  }
+})();
 </script>
+
 </body>
 </html>
